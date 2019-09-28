@@ -1,5 +1,5 @@
 import fulcrum_electronics as fe
-import db.db_manager as db
+import database.db_manager as db
 import busio
 import board
 
@@ -27,10 +27,10 @@ def options():
 def optionSwitch():
         choice = input('Choice: ')
         if choice == '1':
-                angleSensor.calibrate(sampleFreq)
+                # angleSensor.calibrate(sampleFreq)
                 options()
         elif choice == '2':
-                motorController.setThrottleRange()
+                # motorController.setThrottleRange()
                 options()
         elif choice == '3':
                 print(choice + ' worked')
