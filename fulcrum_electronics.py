@@ -10,7 +10,7 @@ class Sensor(BNO055):
         self.calibratedAngle = 0
         
         
-    def calibrate(self, sampleFreq):
+    def calibrate(self, sampleFreq:float):
         print('CALIBRATION: Let rod hang down, perpendicular to the floor')
         input('Press return to continue...')
         print('CALIBRATION: Now calibrating BNO055 IMU - Angle Sensor')
@@ -35,13 +35,13 @@ class Sensor(BNO055):
         return self.euler[3]
 
 class MotorController(PCA9685):
-    def __init__(self, i2c, motorChannel, pwmFrequency):
+    def __init__(self, i2c, motorChannel:int, pwmFrequency:int):
         super().__init__(i2c)
         self.motorChannel = motorChannel
         self.frequency = pwmFrequency
         
         
-    def startup(self, sampleFreq, startupValue):
+    def startup(self, sampleFreq:float, startupValue:int):
         for x in range(100):
             value = round(x/100 * startupValue)
             self.channels[self.motorChannel].duty_cycle = value
@@ -51,7 +51,7 @@ class MotorController(PCA9685):
             self.channels[self.motorChannel].duty_cycle = startupValue
             sleep(sampleFreq)
 
-    def setThrottle(self, value):
+    def setThrottle(self, value:int):
         self.channels[self.motorChannel].duty_cycle = value
 
     def setThrottleRange(self):
