@@ -4,3 +4,4 @@ sql_create_fulcrum_values_table = """CREATE TABLE IF NOT EXISTS fulcrum_values (
     throttleLow INTEGER NOT NULL,
     throttleHigh INTEGER NOT NULL
 );"""
+
