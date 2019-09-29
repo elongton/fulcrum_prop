@@ -3,12 +3,12 @@ from adafruit_pca9685 import PCA9685
 import statistics
 from time import sleep
 import time
+from threading import Thread
 
 class Sensor(BNO055):
     def __init__(self, i2c):
         super().__init__(i2c)
         self.calibratedAngle = 0
-        
         
     def calibrate(self, sampleFreq:float):
         print('CALIBRATION: Let rod hang down, perpendicular to the floor')
@@ -34,22 +34,32 @@ class Sensor(BNO055):
     def sensedRate(self):
         return self.euler[3]
 
-class MotorController(PCA9685):
-    def __init__(self, i2c, motorChannel:int, pwmFrequency:int):
-        super().__init__(i2c)
+class MotorController(PCA9685, Thread):
+    def __init__(self, i2c, motorChannel:int, pwmFrequency:int, sampleFreq:float, startupValue:int):
+        PCA9685.__init__(self, i2c)
+        Thread.__init__(self)
         self.motorChannel = motorChannel
         self.frequency = pwmFrequency
+        self.sampleFreq = sampleFreq
+        self.startupValue = startupValue
+        self.startupSequence = False
         
-        
-    def startup(self, sampleFreq:float, startupValue:int):
+    #override the Thread run method (this is the only one you can override)
+    def run(self):
+        self.startupSequence = True
         for x in range(100):
-            value = round(x/100 * startupValue)
+            value = round(x/100 * self.startupValue)
             self.channels[self.motorChannel].duty_cycle = value
-            print(value)
-            sleep(sampleFreq)
-        while True:
-            self.channels[self.motorChannel].duty_cycle = startupValue
-            sleep(sampleFreq)
+            # print(value)
+            sleep(self.sampleFreq)
+        while self.startupSequence:
+            self.channels[self.motorChannel].duty_cycle = self.startupValue
+            sleep(self.sampleFreq)
+        
+
+    def stopMotor(self):
+        self.startupSequence = False
+        self.channels[self.motorChannel].duty_cycle = 0
 
     def setThrottle(self, value:int):
         self.channels[self.motorChannel].duty_cycle = value
