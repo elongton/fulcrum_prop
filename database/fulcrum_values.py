@@ -13,7 +13,6 @@ def insert_fulcrum_values_row(conn, values):
     cur = conn.cursor()
     cur.execute(insert_sql, values)
     conn.commit()
-    pass
 
 def delete_fulcrum_values(conn, row=None):
     cur = conn.cursor()
@@ -24,7 +23,6 @@ def delete_fulcrum_values(conn, row=None):
         delete_sql = ''' DELETE FROM fulcrum_values WHERE id=? '''
         cur.execute(delete_sql,row)
     conn.commit()
-    pass
 
 def cleanup_fulcrum_values_table(conn):
     fulcrum_value_rows = retrieve_fulcrum_values(conn)
