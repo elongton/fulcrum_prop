@@ -1,6 +1,5 @@
 import fulcrum_electronics as fe
 from database.db_manager import DBManager
-import database.fulcrum_values as fv
 import busio
 import board
 
@@ -29,14 +28,15 @@ def options():
 def optionSwitch():
         choice = input('Choice: ')
         if choice == '1':
-                offset = angleSensor.calibrate(sampleFreq)
-                db.update_calibration(offset)
+                calibration = angleSensor.calibrate(sampleFreq)
+                db.update_calibration(calibration)
                 options()
         elif choice == '2':
                 [lowerValue, upperValue] = motorController.setThrottleRange()
                 db.update_throttle_limits(lowerValue, upperValue)
                 options()
         elif choice == '3':
+                motorController.startup(sampleFreq, db.retrieve_fulcrum_values(id=1)[1]+500)
                 print(choice + ' worked')
         elif choice == '4':
                 fulcrumValues = db.retrieve_fulcrum_values(id=1)

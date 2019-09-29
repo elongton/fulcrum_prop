@@ -1,6 +1,6 @@
 import sqlite3
 from .schema import *
-from .fulcrum_values import FulcrumValues
+from .throttle_angle_values import FulcrumValues
 from sqlite3 import Error
 
 class DBManager(FulcrumValues):
