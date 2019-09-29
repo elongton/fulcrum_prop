@@ -26,7 +26,7 @@ class Sensor(BNO055):
         print('Average sensed angle was: {}'.format(avgAngle))
         print('Now put back in safety position.')
         input('Press return to continue...')
-        pass
+        return self.calibratedAngle
     
     def sensedAngle(self):
         return self.euler[2] + self.calibratedAngle
@@ -61,6 +61,7 @@ class MotorController(PCA9685):
         input('SET THROTTLE RANGE: Now energize the ESC and wait for beep.')
         lowerValue = input('SET THROTTLE RANGE: Enter lower value: ')
         self.setThrottle(int(lowerValue))
+        return [lowerValue, upperValue]
         
 
             

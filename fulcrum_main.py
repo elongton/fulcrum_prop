@@ -8,13 +8,10 @@ import board
 sampleFreq = 0.02
 
 #initialize objects
-# i2c_bus = busio.I2C(board.SCL, board.SDA)
-# angleSensor = fe.Sensor(i2c_bus)
-# motorController = fe.MotorController(i2c_bus, 7, 500)
+i2c_bus = busio.I2C(board.SCL, board.SDA)
+angleSensor = fe.Sensor(i2c_bus)
+motorController = fe.MotorController(i2c_bus, 7, 500)
 db = DBManager()
-db.update_calibration(23)
-db.update_throttle_limits(200, 300)
-print(db.retrieve_fulcrum_values(id=1))
 
 #routines
 def options():
@@ -23,7 +20,7 @@ def options():
         (1): Calibrate Sensor
         (2): Set Throttle Range
         (3): Startup Motor
-        (4): View Fulcrum Prop Settings
+        (4): Fulcrum Prop Values
         (5): Quit
         '''
         )
@@ -32,16 +29,22 @@ def options():
 def optionSwitch():
         choice = input('Choice: ')
         if choice == '1':
-                # angleSensor.calibrate(sampleFreq)
+                offset = angleSensor.calibrate(sampleFreq)
+                db.update_calibration(offset)
                 options()
         elif choice == '2':
-                # motorController.setThrottleRange()
+                [lowerValue, upperValue] = motorController.setThrottleRange()
+                db.update_throttle_limits(lowerValue, upperValue)
                 options()
         elif choice == '3':
                 print(choice + ' worked')
         elif choice == '4':
-                print('exiting')
-                pass
+                fulcrumValues = db.retrieve_fulcrum_values(id=1)
+                print(f'\nCalibration Offset: {fulcrumValues[0]}')
+                print(f'Throttle Low: {fulcrumValues[1]}')
+                print(f'Throttle High: {fulcrumValues[2]}')
+                input('\nPress return to continue...')
+                options()
         elif choice == '5':
                 print('exiting')
                 pass
@@ -50,6 +53,6 @@ def optionSwitch():
                 optionSwitch()
 
 def main():
-        # options()
+        options()
         pass
 main()
