@@ -1,8 +1,8 @@
-import fulcrum_electronics as fe
-import database.db_manager as db
+# import fulcrum_electronics as fe
+from database.db_manager import DBManager
 import database.fulcrum_values as fv
-import busio
-import board
+# import busio
+# import board
 
 #initialize values
 sampleFreq = 0.02
@@ -11,7 +11,7 @@ sampleFreq = 0.02
 # i2c_bus = busio.I2C(board.SCL, board.SDA)
 # angleSensor = fe.Sensor(i2c_bus)
 # motorController = fe.MotorController(i2c_bus, 7, 500)
-db.init()
+db = DBManager()
 
 #routines
 def options():
