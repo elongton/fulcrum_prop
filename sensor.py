@@ -2,11 +2,12 @@ from adafruit_bno055 import BNO055
 import statistics
 import time
 from time import sleep
+from database.db_manager import DBManager
 
 class Sensor(BNO055):
-    def __init__(self, i2c, terminal):
+    def __init__(self, i2c, calibratedAngle, terminal):
         super().__init__(i2c)
-        self.calibratedAngle = 0
+        self.calibratedAngle = calibratedAngle
         self.terminal = terminal
         
     def calibrate(self, sampleFreq:float):

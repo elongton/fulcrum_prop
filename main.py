@@ -13,8 +13,9 @@ sampleFreq = 0.02
 terminal = AuxPipe('angle_values')
 db = DBManager()
 i2c_bus = busio.I2C(board.SCL, board.SDA)
-angleSensor = Sensor(i2c_bus, terminal)
-motorStartupValue = db.retrieve_fulcrum_values(id=1)[1]+500
+fulcrumValues = db.retrieve_fulcrum_values(id=1)
+motorStartupValue = fulcrumValues[1]+500
+angleSensor = Sensor(i2c_bus, fulcrumValues[0], terminal)
 motorController = MotorController(i2c_bus, 7, 500, sampleFreq, motorStartupValue, angleSensor, terminal)
 
 #routines
