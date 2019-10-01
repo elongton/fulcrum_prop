@@ -1,4 +1,5 @@
-import fulcrum_electronics as fe
+from motor_controller import MotorController
+from sensor import Sensor
 from database.db_manager import DBManager
 import busio
 import board
@@ -8,9 +9,9 @@ sampleFreq = 0.02
 
 #initialize objects
 i2c_bus = busio.I2C(board.SCL, board.SDA)
-angleSensor = fe.Sensor(i2c_bus)
+angleSensor = Sensor(i2c_bus)
 db = DBManager()
-motorController = fe.MotorController(i2c_bus, 7, 500, sampleFreq, db.retrieve_fulcrum_values(id=1)[1]+500)
+motorController = MotorController(i2c_bus, 7, 500, sampleFreq, db.retrieve_fulcrum_values(id=1)[1]+500)
 
 #routines
 def options(step):
