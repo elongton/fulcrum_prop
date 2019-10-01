@@ -53,11 +53,14 @@ class MotorController(PCA9685, Thread):
             # print(value)
             sleep(self.sampleFreq)
         while self.started:
-            if self.controller == 1:
+            if self.controller == 0:
+                self.setThrottle(self.startupValue - 300)
+            elif self.controller == 1:
                 self.setThrottle(self.startupValue)
+            elif self.controller == 2:
+                self.setThrottle(self.startupValue + 100)
             else:
-                self.started = False
-
+                self.setThrottle(0)
             sleep(self.sampleFreq)
         print('run loop ended')
         
