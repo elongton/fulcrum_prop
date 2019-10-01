@@ -4,9 +4,10 @@ import time
 from time import sleep
 
 class Sensor(BNO055):
-    def __init__(self, i2c):
+    def __init__(self, i2c, terminal):
         super().__init__(i2c)
         self.calibratedAngle = 0
+        self.terminal = terminal
         
     def calibrate(self, sampleFreq:float):
         print('CALIBRATION: Let rod hang down, perpendicular to the floor')
@@ -19,6 +20,7 @@ class Sensor(BNO055):
             angleList.append(self.euler[2])
             sleep(sampleFreq)
             timedCalibration = time.time() - t0
+            self.terminal.write(str(self.euler[2]))
         avgAngle = statistics.mean(angleList)
         self.calibratedAngle = 0 - avgAngle
         print('Average sensed angle was: {}'.format(avgAngle))

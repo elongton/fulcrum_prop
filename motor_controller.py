@@ -5,9 +5,11 @@ from threading import Thread
 
 
 class MotorController(PCA9685, Thread):
-    def __init__(self, i2c, motorChannel:int, pwmFrequency:int, sampleFreq:float, startupValue:int):
+    def __init__(self, i2c, motorChannel:int, pwmFrequency:int, sampleFreq:float, startupValue:int, angleSensor, terminal):
         PCA9685.__init__(self, i2c)
         Thread.__init__(self)
+        self.angleSensor = angleSensor
+        self.terminal = terminal
         self.motorChannel = motorChannel
         self.frequency = pwmFrequency
         self.sampleFreq = sampleFreq
@@ -33,6 +35,7 @@ class MotorController(PCA9685, Thread):
             #manual mode controller
             elif self.controller == 2:
                 self.setThrottle(self.manualValue)
+                self.terminal.write(str(self.angleSensor.sensedAngle()))
             #nothing
             else:
                 self.setThrottle(0)
