@@ -3,8 +3,7 @@ from adafruit_pca9685 import PCA9685
 import statistics
 from time import sleep
 import time
-import threading
-
+from threading import Thread
 
 class Sensor(BNO055):
     def __init__(self, i2c):
@@ -35,73 +34,50 @@ class Sensor(BNO055):
     def sensedRate(self):
         return self.euler[3]
 
-class MotorController(PCA9685, threading.Thread):
-# class MotorController(PCA9685):
-    def __init__(self, i2c, motorChannel:int, pwmFrequency:int):
+class MotorController(PCA9685, Thread):
+    def __init__(self, i2c, motorChannel:int, pwmFrequency:int, sampleFreq:float, startupValue:int):
         PCA9685.__init__(self, i2c)
-        threading.Thread.__init__(self)
-        self.i2c = i2c
+        Thread.__init__(self)
         self.motorChannel = motorChannel
-        self.pwmFrequency = pwmFrequency
-        self.startupSequence = False
+        self.frequency = pwmFrequency
+        self.sampleFreq = sampleFreq
+        self.startupValue = startupValue
         self.started = True
-
-
-
+        self.controller = 1
+        
+    #override the Thread run method (this is the only one you can override)
     def run(self):
-        print('starting')
-        i=0
+        for x in range(100):
+            value = round(x/100 * self.startupValue)
+            self.channels[self.motorChannel].duty_cycle = value
+            # print(value)
+            sleep(self.sampleFreq)
         while self.started:
-            i = i+30
-            # print(i)
-            self.setThrottle(i)
-            sleep(0.02)
-        print('finished')
+            if self.controller == 1:
+                self.setThrottle(self.startupValue)
+            else:
+                self.started = False
+
+            sleep(self.sampleFreq)
+        print('run loop ended')
+        
 
     def stopMotor(self):
-        self.startupSequence = False
+        self.started = False
         self.channels[self.motorChannel].duty_cycle = 0
 
     def setThrottle(self, value:int):
         self.channels[self.motorChannel].duty_cycle = value
 
-    def setThrottleRange(self, sampleFreq):
+    def setThrottleRange(self):
         print('SET THROTTLE RANGE: ESC must be de-energized.')
         upperValue = input('SET THROTTLE RANGE: Enter upper value: ')
-        upperValueThread = threading.Thread(target=self.constantThrottle, args=(sampleFreq, int(upperValue)))
-        upperValueThread.start()
-        # self.setThrottle(int(upperValue))
+        self.setThrottle(int(upperValue))
         input('SET THROTTLE RANGE: Now energize the ESC and wait for beep.')
         lowerValue = input('SET THROTTLE RANGE: Enter lower value: ')
-        upperValueThread.do_run = False
-        upperValueThread.join()
-        lowerValueThread = threading.Thread(target=self.constantThrottle, args=(sampleFreq, int(lowerValue)))
-        lowerValueThread.start()
-        # self.setThrottle(int(lowerValue))
-        input('SET THROTTLE RANGE: Throttle range set, press enter to turn off signal to ESC.')
-        lowerValueThread.do_run = False
-        lowerValueThread.join()
+        self.setThrottle(int(lowerValue))
         return [lowerValue, upperValue]
         
 
-    def startMotor(self, sampleFreq, startupValue):
-        t = threading.currentThread()
-        self.startupSequence = True
-        for x in range(100):
-            value = round(x/100 * startupValue)
-            self.setThrottle(value)
-            sleep(sampleFreq)
-        print('ramp up complete')
-        while getattr(t, "do_run", True):
-            self.setThrottle(startupValue)
-            sleep(sampleFreq)
-        print('motor startup stopped')
             
-    def constantThrottle(self, sampleFreq, value):
-        t = threading.current_thread()
-        print(value)
-        while getattr(t, "do_run", True):
-            self.setThrottle(value)
-            sleep(sampleFreq)
-        # sleep(sampleFreq)
-        print(f'quit - {value}')
+
