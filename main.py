@@ -4,8 +4,13 @@ from database.db_manager import DBManager
 import busio
 import board
 
+from aux_terminal import AuxPipe
+
+
+
 #initialize
 sampleFreq = 0.02
+terminal = AuxPipe()
 db = DBManager()
 i2c_bus = busio.I2C(board.SCL, board.SDA)
 angleSensor = Sensor(i2c_bus)
@@ -77,7 +82,7 @@ def optionSwitch(step):
                                 controllerManualInput = input("You may input a throttle value - 4000 to 6500, 'q' will quit: ")
                         options(1)
                 elif choice == '2':
-                        motorController.controller = 0 #stop
+                        motorController.controller = 0 #pause
                         options(0)
                 else:
                         print('nothing selected, try again')
