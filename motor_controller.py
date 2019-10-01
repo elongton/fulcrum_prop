@@ -12,6 +12,7 @@ class MotorController(PCA9685, Thread):
         self.frequency = pwmFrequency
         self.sampleFreq = sampleFreq
         self.startupValue = startupValue
+        self.manualValue = 4500
         self.started = True
         self.controller = 1
         
@@ -28,7 +29,7 @@ class MotorController(PCA9685, Thread):
             elif self.controller == 1:
                 self.setThrottle(self.startupValue)
             elif self.controller == 2:
-                self.setThrottle(self.startupValue + 100)
+                self.setThrottle(self.manualValue)
             else:
                 self.setThrottle(0)
             sleep(self.sampleFreq)

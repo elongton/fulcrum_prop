@@ -4,14 +4,13 @@ from database.db_manager import DBManager
 import busio
 import board
 
-#initialize values
+#initialize
 sampleFreq = 0.02
-
-#initialize objects
+db = DBManager()
 i2c_bus = busio.I2C(board.SCL, board.SDA)
 angleSensor = Sensor(i2c_bus)
-db = DBManager()
-motorController = MotorController(i2c_bus, 7, 500, sampleFreq, db.retrieve_fulcrum_values(id=1)[1]+500)
+motorStartupValue = db.retrieve_fulcrum_values(id=1)[1]+500
+motorController = MotorController(i2c_bus, 7, 500, sampleFreq, motorStartupValue)
 
 #routines
 def options(step):
@@ -72,6 +71,10 @@ def optionSwitch(step):
         elif step == 1:
                 if choice == '1':
                         motorController.controller = 2 #manual controller
+                        controllerManualInput = motorController.manualValue
+                        while controllerManualInput != 'q':
+                                motorController.manualValue = int(controllerManualInput)
+                                controllerManualInput = input("You may input a throttle value - 4000 to 6500, 'q' will quit: ")
                         options(1)
                 elif choice == '2':
                         motorController.controller = 0 #stop
