@@ -1,0 +1,23 @@
+{
+  "name": "fulcrum_prop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alexjharrison/fulcrum_prop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alexjharrison/fulcrum_prop/issues"
+  },
+  "homepage": "https://github.com/alexjharrison/fulcrum_prop#readme",
+  "dependencies": {
+    "react": "^16.10.2"
+  }
+}
